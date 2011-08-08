@@ -51,6 +51,8 @@
 *
 ****************************************************************/
  
+#include "../include/cob_vision_utils/StdAfx.h"
+
 #ifdef __LINUX__
 #include "cob_vision_utils/VisionUtils.h"
 #else
@@ -783,7 +785,7 @@ unsigned long ipa_Utils::FilterTearOffEdges(cv::Mat& xyzImage, cv::Mat* mask, fl
 	return ipa_Utils::RET_OK;
 }
 
-unsigned long ipa_Utils::FilterSpeckles(cv::Mat& img, int maxSpeckleSize, double maxDiff,cv::Mat& _buf )
+unsigned long ipa_Utils::FilterSpeckles(cv::Mat& img, int maxSpeckleSize, double maxDiff, cv::Mat& _buf )
 {
     CV_Assert( img.type() == CV_32FC3 );
 
@@ -909,9 +911,9 @@ cv::Mat ipa_Utils::GetColorcoded(const cv::Mat& img_32F)
 
 cv::Mat ipa_Utils::GetColorcoded(const cv::Mat& img_32F, double min, double max)
 {
-    float H,S,V;
+    double H,S,V;
     cv::Mat hsvImage(img_32F.size(), CV_8UC3);
-    int hsvBlue = 180*2/3;
+    int hsvBlue = (int)(180*2/3);
     
     if (min > max)
     {
@@ -949,9 +951,9 @@ cv::Mat ipa_Utils::GetColorcoded(const cv::Mat& img_32F, double min, double max)
                     V = 255;
                 }
 
-                hsvImage.at<cv::Vec3b>(i,j)[0] = hsvBlue - H;
-                hsvImage.at<cv::Vec3b>(i,j)[1] = S;
-                hsvImage.at<cv::Vec3b>(i,j)[2] = V;
+                hsvImage.at<cv::Vec3b>(i,j)[0] = (unsigned char) hsvBlue - H;
+                hsvImage.at<cv::Vec3b>(i,j)[1] = (unsigned char) S;
+                hsvImage.at<cv::Vec3b>(i,j)[2] = (unsigned char) V;
             }
             else
             {
@@ -985,7 +987,11 @@ unsigned long ipa_Utils::SaveMat(cv::Mat& mat, std::string filename)
 	header[1] = mat.cols;
 	header[2] = channels;
 
+#ifndef __LINUX__
 	f.write((char*)header, 3 * sizeof(int));
+#else
+	f.write((char const*)header, 3 * sizeof(int));
+#endif
 
 	for(unsigned int row=0; row<(unsigned int)mat.rows; row++)
 	{

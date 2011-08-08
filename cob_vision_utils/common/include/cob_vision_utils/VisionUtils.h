@@ -182,7 +182,6 @@ public:
 // @return Vector of same type as input vector (length n)
 template<class T> std::vector<T> takeRandomN(const std::vector<T> &v, int n)
 {
-    int current = 0;
     std::vector<int> indices(v.size());
     std::generate(indices.begin(), indices.end(), UniqueNumber());
     std::random_shuffle(indices.begin(), indices.end());

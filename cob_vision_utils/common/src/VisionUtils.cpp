@@ -70,7 +70,7 @@ cv::Mat ipa_Utils::vstack(const std::vector<cv::Mat> &mats)
 
     // we need to know the total number of rows to create the stacked matrix
     int nRows = 0;
-    int nCols = mats.front().cols;
+    int nCols = 0;
     int datatype = mats.front().type();
     std::vector<cv::Mat>::const_iterator it;
     for (it = mats.begin(); it != mats.end(); ++it)
@@ -79,6 +79,7 @@ cv::Mat ipa_Utils::vstack(const std::vector<cv::Mat> &mats)
             continue;
         if (it->rows == 0 || it->cols == 0)
             continue;
+        nCols = it->cols;
         nRows += it->rows;
     }
 

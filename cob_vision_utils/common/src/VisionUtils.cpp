@@ -75,6 +75,10 @@ cv::Mat ipa_Utils::vstack(const std::vector<cv::Mat> &mats)
     std::vector<cv::Mat>::const_iterator it;
     for (it = mats.begin(); it != mats.end(); ++it)
     {
+        if (it->empty())
+            continue;
+        if (it->rows == 0 || it->cols == 0)
+            continue;
         nRows += it->rows;
     }
 
@@ -84,10 +88,17 @@ cv::Mat ipa_Utils::vstack(const std::vector<cv::Mat> &mats)
     cv::Mat stacked(nRows, nCols, datatype);
     for (it = mats.begin(); it != mats.end(); ++it)
     {
-        if (it->rows == 0)
+        if (it->empty())
+            continue;
+        if (it->rows == 0 || it->cols == 0)
             continue;
 
         // make sure all mats have same num of cols and data type
+        if (it->cols != nCols)
+        {
+            std::cerr << "ERROR - ipa_Utils::vstack: All mats must have the same number of column" << std::endl;
+            std::cerr << "\t Current mat has " << it->cols << " colums. Expected: " << nCols << std::endl;
+        }
         CV_Assert(it->cols == nCols);
         CV_Assert(it->type() == datatype);
 
